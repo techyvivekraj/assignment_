@@ -1,16 +1,17 @@
-# assignment
+Assignment
 
-A new Flutter project.
+The app displays a list of restaurants on a map, and allows users to save their favorite places using Firebase. 
+It utilizes GetX for state management.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- Login with Google Signing (Firebase)
+- Show restaurants on a map with markers nearby current location.
+- Differentiate nearby places and favorite places with different marker colors.
+- Save and manage favorite places with Firebase Firestore.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+git clone https://github.com/yourusername/nearby_places_flutter.git
+cd nearby_places_flutter
+flutter pub get
+flutter run

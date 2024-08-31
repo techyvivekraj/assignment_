@@ -26,7 +26,7 @@ class PlaceController extends GetxController {
   void onInit() {
     try {
       isLoading(true);
-      fetchPlace();
+      fetchNearbyPlaces();
       fetchavoritesPlaces();
     } on PermissionDeniedException {
       throw LocationPermissionDeniedException();
@@ -36,14 +36,6 @@ class PlaceController extends GetxController {
     }
     // TODO: implement onInit
     super.onInit();
-  }
-
-  void fetchPlace() async {
-    try {
-      await fetchNearbyPlaces();
-    } catch (e) {
-      errorMessage("Something went wrong");
-    }
   }
 
   Future<void> fetchNearbyPlaces() async {
