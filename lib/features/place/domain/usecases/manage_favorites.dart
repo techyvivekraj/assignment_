@@ -7,14 +7,26 @@ class ManageFavorites {
   ManageFavorites(this.repository);
 
   Future<void> addFavorite(PlaceEntity place) async {
-    await repository.saveFavoritePlace(place);
+    try {
+      await repository.saveFavoritePlace(place);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> removeFavorite(String placeId) async {
-    await repository.removeFavoritePlace(placeId);
+    try {
+      await repository.removeFavoritePlace(placeId);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<List<PlaceEntity>> getFavorites() async {
-    return await repository.getFavoritePlaces();
+    try {
+      return await repository.getFavoritePlaces();
+    } catch (e) {
+      rethrow;
+    }
   }
 }

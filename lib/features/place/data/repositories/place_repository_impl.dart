@@ -15,38 +15,55 @@ class PlaceRepositoryImpl implements PlaceRepository {
   @override
   Future<List<PlaceEntity>> getNearbyPlaces(
       double latitude, double longitude) async {
-    final places = await remoteDataSource.getNearbyPlaces(latitude, longitude);
-    return places;
+    try {
+      final places =
+          await remoteDataSource.getNearbyPlaces(latitude, longitude);
+      return places;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   @override
   Future<void> saveFavoritePlace(PlaceEntity place) async {
-    await firestore.collection('favorites').doc(place.id).set({
-      'name': place.name,
-      'latitude': place.latitude,
-      'longitude': place.longitude,
-      'rating': place.rating,
-      'isOpen': place.isOpen,
-    });
+    try {
+      await firestore.collection('favorites').doc(place.id).set({
+        'name': place.name,
+        'latitude': place.latitude,
+        'longitude': place.longitude,
+        'rating': place.rating,
+        'isOpen': place.isOpen,
+      });
+    } catch (e) {
+      rethrow;
+    }
   }
 
   @override
   Future<void> removeFavoritePlace(String placeId) async {
-    await firestore.collection('favorites').doc(placeId).delete();
+    try {
+      await firestore.collection('favorites').doc(placeId).delete();
+    } catch (e) {
+      rethrow;
+    }
   }
 
   @override
   Future<List<PlaceEntity>> getFavoritePlaces() async {
-    final snapshot = await firestore.collection('favorites').get();
-    return snapshot.docs.map((doc) {
-      return PlaceEntity(
-        id: doc.id,
-        name: doc['name'],
-        latitude: doc['latitude'],
-        longitude: doc['longitude'],
-        rating: doc['rating'],
-        isOpen: doc['isOpen'],
-      );
-    }).toList();
+    try {
+      final snapshot = await firestore.collection('favorites').get();
+      return snapshot.docs.map((doc) {
+        return PlaceEntity(
+          id: doc.id,
+          name: doc['name'],
+          latitude: doc['latitude'],
+          longitude: doc['longitude'],
+          rating: doc['rating'],
+          isOpen: doc['isOpen'],
+        );
+      }).toList();
+    } catch (e) {
+      rethrow;
+    }
   }
 }

@@ -12,18 +12,18 @@ class PlaceModel extends PlaceEntity {
 
   factory PlaceModel.fromJson(Map<String, dynamic> json) {
     return PlaceModel(
-      id: json['id'],
+      id: json['place_id'],
       name: json['name'],
       latitude: json['geometry']['location']['lat'],
       longitude: json['geometry']['location']['lng'],
-      rating: json['rating'].toDouble(),
+      rating: json['rating']?.toDouble(),
       isOpen: json['opening_hours']?['open_now'] ?? false,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'place_id': id,
       'name': name,
       'latitude': latitude,
       'longitude': longitude,

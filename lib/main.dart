@@ -1,5 +1,6 @@
 import 'package:assignment/features/authentication/presentation/pages/login_page.dart';
 import 'package:assignment/features/place/presentation/pages/place_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'injection_container.dart' as di;
@@ -12,11 +13,16 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await di.init();
-  runApp(const MyApp());
+  User? user = FirebaseAuth.instance.currentUser;
+
+  String initialRoute = user != null ? '/home' : '/login';
+
+  runApp(MyApp(initialRoute: initialRoute));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String initialRoute;
+  const MyApp({super.key, required this.initialRoute});
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -27,7 +33,7 @@ class MyApp extends StatelessWidget {
         // textTheme: GoogleFonts.robotoTextTheme(),
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/login',
+      initialRoute: initialRoute,
       getPages: [
         GetPage(name: '/login', page: () => LoginPage()),
         GetPage(name: '/home', page: () => PlacePage()),

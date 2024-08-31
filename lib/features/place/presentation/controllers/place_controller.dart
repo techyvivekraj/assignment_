@@ -1,3 +1,4 @@
+import 'package:assignment/core/errors/exceptions.dart';
 import 'package:assignment/core/utils/location_utils.dart';
 import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
@@ -18,18 +19,30 @@ class PlaceController extends GetxController {
   var nearbyPlaces = <PlaceEntity>[].obs;
   var favoritePlaces = <PlaceEntity>[].obs;
 
+  var errorMessage = ''.obs;
+  var isLoading = false.obs;
+
   @override
   void onInit() {
-    fetchCurrentLocationAndNearbyPlaces();
+    try {
+      isLoading(true);
+      fetchPlace();
+      fetchavoritesPlaces();
+    } on PermissionDeniedException {
+      throw LocationPermissionDeniedException();
+    } catch (e) {
+      isLoading(false);
+      handleErrors(e);
+    }
     // TODO: implement onInit
     super.onInit();
   }
 
-  void fetchCurrentLocationAndNearbyPlaces() async {
+  void fetchPlace() async {
     try {
       await fetchNearbyPlaces();
     } catch (e) {
-      Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
+      errorMessage("Something went wrong");
     }
   }
 
@@ -39,20 +52,48 @@ class PlaceController extends GetxController {
       currentLocation.value = location;
       final places =
           await getNearbyPlaces(location.latitude, location.longitude);
-      print("vivek $places");
       nearbyPlaces.assignAll(places);
+    } on PermissionDeniedException {
+      throw LocationPermissionDeniedException();
     } catch (e) {
-      print("vivek $e");
+      rethrow;
+    }
+  }
+
+  Future<void> fetchavoritesPlaces() async {
+    try {
+      final favoritePlace = await manageFavorites.getFavorites();
+      favoritePlaces.assignAll(favoritePlace);
+    } catch (e) {
+      rethrow;
     }
   }
 
   void toggleFavoritePlace(PlaceEntity place) async {
-    if (favoritePlaces.any((p) => p.id == place.id)) {
-      await manageFavorites.removeFavorite(place.id);
-      favoritePlaces.removeWhere((p) => p.id == place.id);
+    try {
+      if (favoritePlaces.any((p) => p.id == place.id)) {
+        await manageFavorites.removeFavorite(place.id);
+        favoritePlaces.removeWhere((p) => p.id == place.id);
+      } else {
+        await manageFavorites.addFavorite(place);
+        favoritePlaces.add(place);
+      }
+    } catch (e) {
+      errorMessage("Something went wrong");
+    }
+  }
+
+  void handleErrors(dynamic e) {
+    if (e is LocationPermissionDeniedException) {
+      errorMessage(
+          'Location permission was denied. Please enable it in the settings.');
+    } else if (e is NoNearbyPlacesFoundException) {
+      errorMessage('No nearby places found.');
+    } else if (e is ApiException) {
+      errorMessage(
+          'Failed to load data from the server. Please check your connection and try again.');
     } else {
-      await manageFavorites.addFavorite(place);
-      favoritePlaces.add(place);
+      errorMessage('Something went wrong. Please try again later.');
     }
   }
 }

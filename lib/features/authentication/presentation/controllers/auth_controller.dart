@@ -7,6 +7,8 @@ class AuthController extends GetxController {
   final SignInWithGoogle signInWithGoogle;
   final SignOut signOut;
 
+  var errorMessage = ''.obs;
+
   var user = Rxn<User>();
 
   AuthController({
@@ -15,11 +17,32 @@ class AuthController extends GetxController {
   });
 
   Future<void> login() async {
-    user.value = await signInWithGoogle();
+    try {
+      user.value = await signInWithGoogle();
+    } catch (e) {
+      // switch (e) {
+      //   case 'user-not-found':
+      //     print('No user found for that email.');
+      //     break;
+      //   case 'wrong-password':
+      //     print('Wrong password provided.');
+      //     break;
+      //   case 'account-exists-with-different-credential':
+      //     print('Account exists with different credentials.');
+      //     break;
+      //   default:
+      //     print('Unknown error occurred: ${e.message}');
+      // }
+      errorMessage("Something went wrong");
+    }
   }
 
   Future<void> logout() async {
-    await signOut();
-    user.value = null;
+    try {
+      await signOut();
+      user.value = null;
+    } catch (e) {
+      errorMessage("Something went wrong");
+    }
   }
 }
