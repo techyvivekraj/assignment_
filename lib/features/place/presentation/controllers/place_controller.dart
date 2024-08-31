@@ -1,7 +1,7 @@
-import 'package:assignment/core/errors/exceptions.dart';
 import 'package:assignment/core/utils/location_utils.dart';
 import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart';
 import '../../domain/entities/place_entity.dart';
 import '../../domain/usecases/get_nearby_places.dart';
 import '../../domain/usecases/manage_favorites.dart';
@@ -24,18 +24,25 @@ class PlaceController extends GetxController {
 
   @override
   void onInit() {
+    fetchPlace();
+    super.onInit();
+  }
+
+  void fetchPlace() async {
     try {
       isLoading(true);
-      fetchNearbyPlaces();
-      fetchavoritesPlaces();
+      errorMessage('');
+      await fetchNearbyPlaces();
+      await fetchavoritesPlaces();
     } on PermissionDeniedException {
-      throw LocationPermissionDeniedException();
+      errorMessage('Permission denied');
+    } on ClientException {
+      errorMessage('Network issue found');
     } catch (e) {
+      errorMessage('Something went wrong');
+    } finally {
       isLoading(false);
-      handleErrors(e);
     }
-    // TODO: implement onInit
-    super.onInit();
   }
 
   Future<void> fetchNearbyPlaces() async {
@@ -45,8 +52,6 @@ class PlaceController extends GetxController {
       final places =
           await getNearbyPlaces(location.latitude, location.longitude);
       nearbyPlaces.assignAll(places);
-    } on PermissionDeniedException {
-      throw LocationPermissionDeniedException();
     } catch (e) {
       rethrow;
     }
@@ -72,20 +77,6 @@ class PlaceController extends GetxController {
       }
     } catch (e) {
       errorMessage("Something went wrong");
-    }
-  }
-
-  void handleErrors(dynamic e) {
-    if (e is LocationPermissionDeniedException) {
-      errorMessage(
-          'Location permission was denied. Please enable it in the settings.');
-    } else if (e is NoNearbyPlacesFoundException) {
-      errorMessage('No nearby places found.');
-    } else if (e is ApiException) {
-      errorMessage(
-          'Failed to load data from the server. Please check your connection and try again.');
-    } else {
-      errorMessage('Something went wrong. Please try again later.');
     }
   }
 }

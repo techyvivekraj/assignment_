@@ -13,61 +13,69 @@ class PlacePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("Nearby Places")),
       body: Obx(() {
-        if (controller.currentLocation.value == null) {
+        if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
         }
         if (controller.errorMessage.value.isNotEmpty) {
           return Center(child: Text(controller.errorMessage.value));
         }
-
         return Column(
           children: [
             Expanded(
-                child: GoogleMap(
-              zoomControlsEnabled: false,
-              // zoomGesturesEnabled: false,
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              initialCameraPosition: CameraPosition(
-                target: LatLng(
-                  controller.currentLocation.value!.latitude,
-                  controller.currentLocation.value!.longitude,
-                ),
-                zoom: 14.0,
-              ),
-              markers: {
-                ...controller.nearbyPlaces.map((place) {
-                  return Marker(
-                    markerId: MarkerId(place.id),
-                    position: LatLng(place.latitude, place.longitude),
-                    infoWindow: InfoWindow(
-                      title: place.name,
-                      snippet: "Add to favoirite ",
-                      onTap: () {
-                        controller.toggleFavoritePlace(place);
-                      },
-                    ),
-                    icon: BitmapDescriptor.defaultMarkerWithHue(
-                        BitmapDescriptor.hueGreen),
-                  );
-                }).toSet(),
-                ...controller.favoritePlaces.map((place) {
-                  return Marker(
-                    markerId: MarkerId(place.id),
-                    position: LatLng(place.latitude, place.longitude),
-                    infoWindow: InfoWindow(
-                      title: place.name,
-                      snippet: "Remove favoirite",
-                      onTap: () {
-                        controller.toggleFavoritePlace(place);
-                      },
-                    ),
-                    icon: BitmapDescriptor.defaultMarkerWithHue(
-                        BitmapDescriptor.hueRed),
-                  );
-                }).toSet(),
-              },
-            )),
+                child: controller.currentLocation.value != null
+                    ? Visibility(
+                        visible: controller.currentLocation.value != null,
+                        child: GoogleMap(
+                          zoomControlsEnabled: false,
+                          // zoomGesturesEnabled: false,
+                          myLocationEnabled: true,
+                          myLocationButtonEnabled: true,
+                          initialCameraPosition: CameraPosition(
+                            target: LatLng(
+                              controller.currentLocation.value!.latitude,
+                              controller.currentLocation.value!.longitude,
+                            ),
+                            zoom: 14.0,
+                          ),
+                          markers: {
+                            ...controller.nearbyPlaces.map((place) {
+                              return Marker(
+                                markerId: MarkerId(place.id),
+                                position:
+                                    LatLng(place.latitude, place.longitude),
+                                infoWindow: InfoWindow(
+                                  title: place.name,
+                                  snippet: "Add to favoirite ",
+                                  onTap: () {
+                                    controller.toggleFavoritePlace(place);
+                                  },
+                                ),
+                                icon: BitmapDescriptor.defaultMarkerWithHue(
+                                    BitmapDescriptor.hueGreen),
+                              );
+                            }).toSet(),
+                            ...controller.favoritePlaces.map((place) {
+                              return Marker(
+                                markerId: MarkerId(place.id),
+                                position:
+                                    LatLng(place.latitude, place.longitude),
+                                infoWindow: InfoWindow(
+                                  title: place.name,
+                                  snippet: "Remove favoirite",
+                                  onTap: () {
+                                    controller.toggleFavoritePlace(place);
+                                  },
+                                ),
+                                icon: BitmapDescriptor.defaultMarkerWithHue(
+                                    BitmapDescriptor.hueRed),
+                              );
+                            }).toSet(),
+                          },
+                        ),
+                      )
+                    : const Center(
+                        child: Text('Location fetching'),
+                      )),
             Expanded(
               child: ListView.builder(
                 itemCount: controller.favoritePlaces.length,

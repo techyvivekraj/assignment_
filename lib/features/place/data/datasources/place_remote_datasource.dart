@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:assignment/core/constants/constants.dart';
-import 'package:assignment/core/errors/exceptions.dart';
+// import 'package:assignment/core/errors/exceptions.dart';
 import 'package:http/http.dart' as http;
 import '../models/place_model.dart';
 
@@ -28,8 +28,8 @@ class PlaceRemoteDataSourceImpl implements PlaceRemoteDataSource {
           .map<PlaceModel>((json) => PlaceModel.fromJson(json))
           .toList();
     } else {
-      // throw Exception('Failed to load nearby places');
-      throw ApiException('Error fetching nearby places');
+      throw Exception('Failed to load nearby places');
+      // throw ApiException('Error fetching nearby places');
     }
   }
 }
