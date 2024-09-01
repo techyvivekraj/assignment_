@@ -21,6 +21,7 @@ class PlaceController extends GetxController {
 
   var errorMessage = ''.obs;
   var isLoading = false.obs;
+  var selectedPlaceType = 'restaurant'.obs;
 
   @override
   void onInit() {
@@ -49,12 +50,17 @@ class PlaceController extends GetxController {
     try {
       final location = await LocationUtils.getCurrentLocation();
       currentLocation.value = location;
-      final places =
-          await getNearbyPlaces(location.latitude, location.longitude);
+      final places = await getNearbyPlaces(
+          location.latitude, location.longitude, selectedPlaceType.value);
       nearbyPlaces.assignAll(places);
     } catch (e) {
       rethrow;
     }
+  }
+
+  void updatePlaceType(String newType) {
+    selectedPlaceType.value = newType;
+    fetchPlace();
   }
 
   Future<void> fetchavoritesPlaces() async {

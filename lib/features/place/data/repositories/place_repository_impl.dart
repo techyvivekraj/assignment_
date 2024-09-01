@@ -1,4 +1,3 @@
-import 'package:assignment/injection_container.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../domain/entities/place_entity.dart';
@@ -17,10 +16,10 @@ class PlaceRepositoryImpl implements PlaceRepository {
   String get userId => auth.currentUser?.uid ?? '';
   @override
   Future<List<PlaceEntity>> getNearbyPlaces(
-      double latitude, double longitude) async {
+      double latitude, double longitude, String searchType) async {
     try {
-      final places =
-          await remoteDataSource.getNearbyPlaces(latitude, longitude);
+      final places = await remoteDataSource.getNearbyPlaces(
+          latitude, longitude, searchType);
       return places;
     } catch (e) {
       rethrow;

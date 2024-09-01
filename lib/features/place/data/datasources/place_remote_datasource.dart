@@ -6,7 +6,8 @@ import 'package:http/http.dart' as http;
 import '../models/place_model.dart';
 
 abstract class PlaceRemoteDataSource {
-  Future<List<PlaceModel>> getNearbyPlaces(double latitude, double longitude);
+  Future<List<PlaceModel>> getNearbyPlaces(
+      double latitude, double longitude, String searchType);
 }
 
 class PlaceRemoteDataSourceImpl implements PlaceRemoteDataSource {
@@ -16,11 +17,11 @@ class PlaceRemoteDataSourceImpl implements PlaceRemoteDataSource {
 
   @override
   Future<List<PlaceModel>> getNearbyPlaces(
-      double latitude, double longitude) async {
+      double latitude, double longitude, String searchType) async {
     const apiKey = AppConstants.googleApiKey;
     final url =
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=1500&type=restaurant&key=$apiKey';
-    // print(url);
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=1500&type=$searchType&key=$apiKey';
+    print(url);
     final response = await client.get(Uri.parse(url));
     if (response.statusCode == 200) {
       final parsed = jsonDecode(response.body) as Map<String, dynamic>;
