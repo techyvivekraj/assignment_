@@ -11,7 +11,7 @@ class PlaceEntity {
     required this.name,
     required this.latitude,
     required this.longitude,
-    this.rating,
+    this.rating = 0,
     required this.isOpen,
   });
 }
